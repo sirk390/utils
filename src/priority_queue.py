@@ -1,7 +1,6 @@
 import heapq
-import collections
 
-class QueueEmpty(Exception):
+class Empty(Exception):
     pass
 
 class DuplicateKeyError(Exception):
@@ -20,10 +19,13 @@ class Item(object):
         return cmp(self.priority, other.priority)
 
 class PriorityQueue(object):
-    ''' PriorityQueue with support for removal and __contains__
-        Based on heapq.
-    '''
+    ''' PriorityQueue with support for removal, change_priority, and  __contains__
+
+        Based on heapq, but marks removed elements. 
+        Elements are only really removed when they have the lowest priority.
         
+        #TODO: Sort stability: tasks with equal priorities to be returned in the order they were originally added
+    '''
     def __init__(self):
         self.queue = []
         self.itemdict = {}
@@ -32,7 +34,7 @@ class PriorityQueue(object):
         """ Add an element 'elm' to to priority queue with priority 'priority' 
             raises DuplicateKeyError if the element is allready present.
         """
-        if (elm in self.itemdict and not self.itemdict[elm].removed):
+        if (elm in self.itemdict):
             raise DuplicateKeyError("Item allready present" )
         item = Item(elm, priority)
         heapq.heappush(self.queue, item)
@@ -40,8 +42,8 @@ class PriorityQueue(object):
     
     def remove(self, elm):
         if (elm not in self.itemdict):
-            raise QueueEmpty("element %s not found" % str(elm))
-        if (elm == self.queue[0].elm):
+            raise Empty("element %s not found" % str(elm))
+        if (elm == self._head().elm):
             heapq.heappop(self.queue)
             self._cleanup_deleted()
         else:
@@ -74,12 +76,12 @@ class PriorityQueue(object):
 
     def _head(self):
         if (len(self) == 0):
-            raise QueueEmpty("not element found")
+            raise Empty("not element found")
         return self.queue[0]
     
     def peek(self):
         """Returns a tulpe of (elm, pri) containing the element with the lowest priority and its priority.
-           Raises QueueEmpty if the Queue is empty.
+           Raises Empty if the Queue is empty.
         """
         head = self._head()
         return (head.elm, head.priority)
@@ -87,7 +89,7 @@ class PriorityQueue(object):
     def pop(self):
         """Returns a tulpe of (elm, pri) containing the element with the lowest priority and its priority,
            and removes the element from the priority queue.
-           Raises QueueEmpty if the Queue is empty.
+           Raises Empty if the Queue is empty.
         """
         item, priority = self.peek()
         self.remove(item)
@@ -108,5 +110,3 @@ class PriorityQueue(object):
         return (result)
 
 
-if __name__ == "__main__":
-    print Item("a", 2) < Item("fe", 1)

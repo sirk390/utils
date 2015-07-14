@@ -1,5 +1,5 @@
 import unittest
-from priority_queue import PriorityQueue, QueueEmpty
+from priority_queue import PriorityQueue, Empty
 
 class TestPriorityQueue(unittest.TestCase):
     def test_PriorityQueue_WhenCreated_IsEmpty(self):
@@ -20,7 +20,7 @@ class TestPriorityQueue(unittest.TestCase):
     def test_PriorityQueue_PeekWhenEmpty_RaisesQueueEmpty(self):
         priority_queue = PriorityQueue()        
         
-        with self.assertRaises(QueueEmpty):
+        with self.assertRaises(Empty):
             priority_queue.peek()
         
     def test_PriorityQueue_Peek_ReturnsElementWithLowestPriority(self):
